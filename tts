@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+##########################################
+# Date: 04/21/2020
+# Author: belkadev <https://github.com/belkadev/>
+# Description: A google text-to-speech solution
+# Disclaimer: Please keep in mind this is unofficial,
+# and it's advisable to support the real "Google TTS" project.
+# Usage: $0 [--lang | -l <language code> ] <text>
+# Example: tts --lang fr "bonjour patate"
+# Requires:  -
+# Todo: ignore urls and other irrelevant characters
+##########################################
+########Default config##########
+##############################
+##########################
+cachedir=$HOME/.cache/speech
+mediaplayer=mplayer
+lang="en"
+##############################
+################################
+#######Parse arguments#########
+query=$(echo "$3" | tr '\r' ' ')
+if [[ "$#" -gt 1 ]]; then case $1 in
+  -l|--lang) lang="$2"; shift;;
+  *) echo "Usage: $(basename $0) [-l|--lang <lang>] [-s|--selection] <text>"; exit 1;;
+esac; shift; 
+else query=$(echo "$1" | tr '\r' ' '); fi
+qlen="${#query}"
+#############################
+#######Split input############
+(( qlen > 0 )) || exit 0
+maxlen=198
+if (( qlen > $maxlen )); then
+declare -a paragraphs
+length=$qlen
+index=0
+pointer=0
+while [[ $length -gt 0 ]]; do
+paragraphs[$index]=${query:$pointer:$maxlen}
+echo "paragraphs[$index] : ${paragraphs[$index]}"
+(( pointer+=$maxlen ))
+(( length-= $maxlen ))
+(( index++ ))
+done
+else paragraphs[0]="$query"; fi
+################################
+# avoid lengthy filenames (dropped)
+#len="${#urlq}"
+#if (( len > 50 )); then
+#filename="longtext"
+#removeflag=1
+#fi#############################
+#######Get the response############
+for p in "${paragraphs[@]}"; do
+urlq=$(echo "${p// /"%20"}"  | tr -s " ")
+##escape illegal characters
+filename=$(echo $lang$urlq | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]' )
+if ! [ -f "$cachedir/$filename.ogg" ]; then
+$(curl -sA "Ff" https://translate.google.com/translate_tts\?ie\=UTF-8\&q\=%22$urlq%22\&tl\="$lang"\&client\=tw-ob -o $cachedir/$filename.ogg);fi
+##play the output
+$mediaplayer "$cachedir/$filename.ogg" &>/dev/null;
+done
+# [ -z $removeflag ] || rm "$cachedir/$filename.ogg"
+exit 0
