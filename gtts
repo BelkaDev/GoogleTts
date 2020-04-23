@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+##########################################
+# Date: 04/21/2020
+# Author: belkadev <https://github.com/belkadev/>
+# Description: A google text-to-speech cli script
+# Disclaimer: Please keep in mind this is unofficial,
+# and it's recommended  to support the official "Google TTS" project.
+# Usage: $0 [--lang | -l <language code> ] <text>
+# Requires:  xclip (optional)
+# Todo: ignore urls and other irrelevant characters
+##########################################
+########Default settings##########
+##############################
+####### $0 --help for more details
+cachedir=$HOME/.cache/speech
+mediaplayer=mplayer
+lang="en-us"
+auto=false
+translate=false; to=$lang
+keep=false
+##### patterns (words to ignore/replace)####
+patterns='{
+"https://";"",
+"http://";"",
+"www.";"",
+"tbh";"to be honest"
+}'
+
+trimurls=false
+#############################
+###############################
+function print_help() {
+	  echo ""
+	  echo ""
+	  echo "Usage:"
+	  echo "  $(basename $0) [options] [text]"
+	  echo "  If no text is provided, current selection will be processed (requires an x env)"
+	  echo "  All default settings can be changed at the top of the script "
+	  echo "  Executing twice will stop the ongoing playback "
+	  echo "  Argument stack order: language > auto > translate"
+	  echo "  Meaning the former will always disregard the others. "
+	  echo "  https://github.com/BelkaDev/GoogleTts for further details."
+	  echo ""
+	  echo "Options:"
+	  echo "   -l, --lang <lang>	    Specify the speech language; must be a valid Google tag
+	  		    [default:$lang]"
+	  echo ""
+
+	echo "   -a, --auto 		    Auto detect and read in that language.
+	  		    [default:$auto]" 
+	  echo ""
+
+	echo "   -t, --translate [lang]   Text is translated before being read; if no target 
+			    language is given, translate to default language
+	      		    [default:{$translate,$lang}]"  
+	  echo ""
+	echo "   -k, --keep   	    Store audio file in the default cache directory
+	      		    [default:$keep]"  
+	  echo ""
+
+	echo "   -c, --clear-cache 	    Remove all the cached audio files and exit" 
+	echo "   -v, --verbose 	    show output details" 
+	echo "   -h, --help 		    Print this menu and exit" 
+}
+urlencode() {
+    old_lc_collate=$LC_COLLATE
+    LC_COLLATE=C
+    local length="${#1}"
+    for (( i = 0; i < length; i++ )); do
+        local c="${1:i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-]) printf "$c" ;;
+            *) printf '%%%02X' "'$c" ;;
+        esac
+    done
+    LC_COLLATE=$old_lc_collate
+}
+#ignore some irrelevant characters like urls 
+
+replace() {
+out="$1"
+words="$(echo "${patterns:1:-1}" | cut -f1 -d ";")"
+words=(${words/// })
+alt="$(echo "${patterns:1:-1}" | cut -f2 -d ";")"
+IFS=',';alt=(${alt}); unset IFS;
+for (( i = 0; i < ${#words[@]} ; i++ )); do
+if [[ "$out" == *"${words[$i]:1:-1}"* ]]; then
+[[ $verboseflag == true ]] && echo "replaced ${words[$i]:1:-1} with "${alt[$i]}""> /dev/tty
+
+out="${out/${words[$i]:1:-1}/${alt[$i]:1:-1}}" 	
+fi
+done
+echo $out
+}
+#######Send kill signal#########
+###Small workaround to kill te mediaplayer when the script is running 
+pid=$(pgrep -f ${mediaplayer} | grep -v $$)
+pscript=$(pgrep -f ${BASH_SOURCE[0]} | grep -v $$)
+if (( ${#pid} > 0 )) && (( ${#pscript} > 0 )); then
+kill -9 $(pgrep -f ${BASH_SOURCE[0]} | grep -v $$) &>/dev/null
+kill -9 $(pgrep -f $mediaplayer | grep -v $$) ;exit 0;fi
+#######Parse arguments#########
+ [ "$#" -ne 0 ] && query=$(echo "${@: -1}");
+ langflag=false
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -l|--lang) langflag=true;lang="$2";shift 1; [ "$#" -eq 1 ] && query="$(echo "$(xclip -o)" |  awk '$1=$1')"  ;;
+    -a|--auto) auto=true;;
+    -t|--translate) translate=true;
+     if [ "$2" != "$query" ];then to="$2"; shift 2 
+	else to="$lang";shift;fi ;;	
+    -h|--help) print_help && exit 0;;
+    -c|--clear-cache)  read -p "removing all files in $cachedir, confirm? [Y/n] " yn;;
+   -v|--verbose) verboseflag=true;;
+    -*) echo "unknown option: $1
+$(basename $0) --help for more details." >&2; exit 1;;
+    *)  query=$(echo "${1}");;
+  esac
+  shift
+done
+case "$query" in
+    -t|-a|-l|--translate|--auto|--lang) query="$(echo "$(xclip -o)" |  awk '$1=$1')";;
+
+    -h|--help) print_help && exit 0;;
+    -c|--clear-cache)  read -p "removing all files in $cachedir, confirm? [Y/n] " yn;
+ case $yn in
+        [Y]) rm $cachedir/*; echo "cleared cache";;
+    esac
+    exit 0;;
+   -v|--verbose) verboseflag=true;;
+    -*) echo "unknown option: $1
+$(basename $0) --help for more details." >&2; exit 1;;
+esac
+#############################
+#######Process input#########
+if [[ $translate == true && $auto == false && $langflag == false ]]; then
+	[[ $verboseflag == true ]] && echo "translating text to $to"
+	data=$(GTranslate to $to "$query")
+	query=$(echo "$data" | grep -w "translation" | cut -f2 -d ":")
+	lang=$(echo "$data"  | grep -w "target_lang" | cut -f2 -d ":")
+	[[ $verboseflag == true ]] && echo "translated text: $query"
+fi
+
+if [[ $auto == true ]]; then lang="$(GTranslate "$query" | grep -w "source_lang" | cut -f2 -d ":")";if [[ $verboseflag == true ]]; then echo "Language detected: $lang";fi;fi
+[ -z "$query" ] && query="$(echo "$(xclip -o)" |  awk '$1=$1')"
+[[ $verboseflag == true ]] && echo "reading (($query)) in $lang"
+qlen="${#query}"
+[ $qlen -le 0 ] && echo "error parsing arguments. exiting" && exit 1;
+
+#######Split text#######
+maxlen=198
+if (( qlen > $maxlen )); then
+declare -a paragraphs
+length=$qlen
+index=0
+pointer=0
+while [[ $length -gt 0 ]]; do
+paragraphs[$index]=${query:$pointer:$maxlen}
+echo "paragraphs[$index] : ${paragraphs[$index]}"
+(( pointer+=$maxlen ))
+(( length-= $maxlen ))
+(( index++ ))
+done
+else paragraphs[0]="$query"; fi
+################################
+# avoid lengthy filenames (deprecated)
+#len="${#urlq}"
+#if (( len > 50 )); then
+#filename="longtext"
+#removeflag=1
+#fi#############################
+#######Get the response############
+for p in "${paragraphs[@]}"; do
+[[ trimurls == false ]] ||  p=$(replace "$p")
+encoded=$(urlencode "$p")
+filename=$(echo $lang$encoded | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]' )
+if ! [ -f "$cachedir/$filename.ogg" ]; then
+#$(curl -sA "Firefox" https://translate.google.com/translate_tts\?ie\=UTF-8\&q\=%22$urlq%22\&tl\="$lang"\&client\=tw-ob -o $cachedir/$filename.ogg)
+$(curl -sA "Firefox" "https://translate.google.com/translate_tts?ie=UTF-8&q=%22${encoded}%22&tl="$lang"&client=tw-ob" -o $cachedir/$filename.ogg)
+fi
+################################
+############read the output
+$mediaplayer "$cachedir/$filename.ogg" &>/dev/null;
+if  [ -f "$cachedir/$filename.ogg" ]; then
+[[ $keep == false ]] && rm $cachedir/$filename.ogg;
+fi
+done
+exit 0 
+#EOF
