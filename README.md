@@ -36,7 +36,7 @@ are `true` , `false` </br> for boolean attributes, for language codes </br>use o
 
 [The complete list can be found here](https://sites.google.com/site/opti365/translate_codes)</br></br>
 Stack order follows this order: language>auto>translate</br>
-Meaning the highest will dismiss the others.</br>
+Meaning the highest will always dismiss the others.</br>
 `-l en -t こにちわ` will not perform translation.</br>
 </br>
 If no text input is given, current selection (text highlight),</br>
@@ -52,7 +52,7 @@ are considered. examples:</br>
 `translate from fr "bonjour"`: translates from French to default language</br>
 `translate`: translate selection from detected language to default language
 
-Output format contains synonyms and examples and is made easy to parse using pipes, </br>
+Output format contains synonyms and examples and is made easy to parse using pipes. </br> </br>
 ![output](https://github.com/BelkaDev/GoogleTts/blob/master/src/output.jpg)
 
 * parse translation:` | grep -w "translation" | cut -f2 -d ":"`
