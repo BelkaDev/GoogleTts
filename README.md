@@ -1,6 +1,6 @@
 ## GoogleTts
 
-Google Text-to-speech and translation tools from the comfort of your command line.
+Google Text-to-speech from the comfort of your command line.
 Wow very cool! </br>
 ![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)</br>
 

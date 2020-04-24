@@ -4,9 +4,6 @@
 # Author: belkadev
 # Description: google translation cli tool
 # Usage: $0 [source] [target] [text]
-# Examples:
-# $0 to de "send me a dime"
-# $0 ピカチュウ
 # more details at https://github.com/BelkaDev/GoogleTts/
 # what's missing? Definitions and synonyms in source language
 # Requires:  jq, xclip (optional)
@@ -32,9 +29,6 @@ query="$1"
 else
 query="$(echo "$(xclip -o)")"
 fi
-echo ""
-echo "PRIMARY:"
-echo "--------"
 response=$(curl --data-urlencode "q=$query" -sA "ff" https://translate.google.com/translate_a/single\?client\=webapp\&sl\=$source_language\&tl\=$target_language\&hl\=$target_language\&dt\=at\&dt\=bd\&dt\=ex\&dt\=ld\&dt\=md\&dt\=qca\&dt\=rw\&dt\=rm\&dt\=sos\&dt\=ss\&dt\=t\&dt\=gt\&source\=bh\&ssel\=0\&tsel\=0\&xid\=1791807%2C45625687%22C45626150\&kc\=1\&tk)
 translation=$(echo "$response" | jq -c '.[0]' | jq -c '.[0]' | jq -c '.[0]')
 lang=$(echo "$response"  | jq -c '.[2]' )
