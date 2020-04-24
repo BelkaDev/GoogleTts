@@ -1,8 +1,8 @@
 ## GoogleTts
 
 Google Text-to-speech from the comfort of your command line.
-Wow very cool! </br>
-![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)</br>
+Wow very cool! </br> </br>
+![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)
 
 ### Requirements
 
@@ -19,8 +19,8 @@ copy both scripts to your $PATH directory
 * Cli text to speech or textual translations
 * Language selection and automatic detection
 * Real-time translation and cross-language speech 
-* Word filtering and pattern changes
-* Read highlighted text
+* Patterns filtering
+* Read current selection
 
 ### How to use?
 **Text-to-speech**
@@ -34,7 +34,7 @@ copy both scripts to your $PATH directory
 	* ` -l es "hi" ` reads input in Spanish voice
 </br>
 <u><i>Notes</i></u></br>
- All options can be specified on runtime or set up </br>
+ All options can be specified at runtime or set up </br>
 by default in the settings, accepted values 
 are `true` , `false` </br> for boolean attributes, for language codes </br>use one of valid language tags supported by Google.</br>
 
