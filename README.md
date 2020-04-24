@@ -73,10 +73,10 @@ Setting up an empty string will ignore the corresponding sequence. (option is di
 
 * Audio files can be stored in the directory of your choice.
 
-### Known issues
+### To do:
 Todo: feed files or web urls to the script
 
 ### Known issues
-All parameters should be interchangeable, but this can cause unexpected results if they get mixed up.</br>
+All parameters should be interchangeable, but this can lead to unexpected results if they get mixed up.</br>
 Encoding erros: some characters may cause the script to fail.
 

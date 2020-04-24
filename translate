@@ -8,7 +8,6 @@
 # $0 to de "send me a dime"
 # $0 ピカチュウ
 # more details at https://github.com/BelkaDev/GoogleTts/
-# last command will translate current selection to your default language
 # what's missing? Definitions and synonyms in source language
 # Requires:  jq, xclip (optional)
 ##########################################

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 ##########################################
 # Date: 04/21/2020
-# Author: belkadev <https://github.com/belkadev/>
+# Author: belkadev
 # Description: A google text-to-speech cli script
 # Disclaimer: Please keep in mind this is unofficial,
 # and it's recommended  to support the official "Google TTS" project.
-# Usage: $0 [--lang | -l <language code> ] <text>
+# Usage: $0 [options] [text]
 # Requires:  xclip (optional)
+# more details at https://github.com/BelkaDev/GoogleTts/
 # Todo: feed files or web urls to the script
 ##########################################
 ########Default settings##########
@@ -179,7 +180,7 @@ for p in "${paragraphs[@]}"; do
 encoded=$(urlencode "$p")
 filename=$(echo $lang$encoded | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]' )
 if ! [ -f "$cachedir/$filename.ogg" ]; then
-$(curl -sA "Firefox" "https://translate.google.com/translate_tts?ie=UTF-8&q=%22${encoded}%22&tl="$lang"&client=tw-ob" -o $cachedir/$filename.ogg)
+$(curl -sA "ff" "https://translate.google.com/translate_tts?ie=UTF-8&q=%22${encoded}%22&tl="$lang"&client=tw-ob" -o $cachedir/$filename.ogg)
 fi
 ################################
 ############read the output
