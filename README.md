@@ -1,6 +1,6 @@
-# New Document# GoogleTts
+GoogleTts
 
-Google Text-to-speech from the comfort of your command line.
+Google Text-to-speech and translation tools from the comfort of your command line.
 Wow very cool! </br>
 ![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)
 
@@ -17,7 +17,7 @@ copy both scripts to your $PATH directory
 * Word filtering and pattern changes
 * Read highlighted text
 
-### How to use ?
+### How to use?
 **Text-to-speech**
 * `-a, --auto` for auto-detection mode. </br>
 	* `-a "こにちわ"` will read in Japanese</br>
