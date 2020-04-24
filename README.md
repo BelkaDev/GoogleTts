@@ -2,7 +2,7 @@
 
 Google Text-to-speech from the comfort of your command line.
 Wow very cool!
-![doge](https://raw.githubusercontent.com/BelkaDev/GoogleTts/master/doge.png)
+![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)
 
 ### How to install?
 ```
@@ -36,7 +36,7 @@ are `true` , `false` </br> for boolean attributes, for language codes </br>use o
 
 [The complete list can be found here](https://sites.google.com/site/opti365/translate_codes)</br></br>
 Stack order follows this order: language>auto>translate</br>
-Meaning the higher important will dismiss the others.</br>
+Meaning the highest will dismiss the others.</br>
 `-l en -t こにちわ` will not perform translation.</br>
 </br>
 If no text input is given, current selection (text highlight),</br>
@@ -53,7 +53,7 @@ are considered. examples:</br>
 `translate`: translate selection from detected language to default language
 
 Output format contains synonyms and examples and is made easy to parse using pipes, </br>
-![output](https://raw.githubusercontent.com/BelkaDev/GoogleTts/master/output.png)
+![output](https://github.com/BelkaDev/GoogleTts/blob/master/src/output.jpg)
 
 * parse translation:` | grep -w "translation" | cut -f2 -d ":"`
 * parse source language:` | grep -w "source_lang" | cut -f2 -d ":"`
