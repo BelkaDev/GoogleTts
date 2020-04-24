@@ -2,7 +2,7 @@
 
 Google Text-to-speech and translation tools from the comfort of your command line.
 Wow very cool! </br>
-![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)
+![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)</br>
 
 ### Requirements
 
@@ -43,15 +43,14 @@ Stack order follows this order: language>auto>translate</br>
 Meaning the highest will always dismiss the others.</br>
 `-l en -t こにちわ` will not perform translation.</br>
 </br>
-If no text input is given, current selection (text highlight),</br>
+If no text input is given, current selection (highlighted text),</br>
 is processed, this requires an X environement. </br>
 When run on terminal, double quotes must wrap the input.</br></br>
 
 **Translation**</br>
 *the translation script can be used independently, but not the other way around*</br>*most broad syntax is as follows:* </br>
 `translate [from <source> to <target> <text>]` </br>
-Every parameter can be ommited, in that case automatic values </br>
-are considered. examples:</br>
+Each parameter can be ommited, in that case automatic values are considered.</br> examples:</br>
 `translate to ko "hello"`: detects language and translates to Korean</br>
 `translate from fr "bonjour"`: translates from French to default language</br>
 `translate`: translate selection from detected language to default language
