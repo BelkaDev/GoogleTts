@@ -33,7 +33,6 @@ copy both scripts to your $PATH directory
 * `-l, --language <lang>` to change the language </br>
 	* ` -l es "hi" ` reads input in Spanish voice
 </br>
-</br>
 <u><i>Notes</i></u></br>
  All options can be specified on runtime or set up </br>
 by default in the settings, accepted values 
