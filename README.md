@@ -4,6 +4,11 @@ Google Text-to-speech and translation tools from the comfort of your command lin
 Wow very cool! </br>
 ![doge](https://github.com/BelkaDev/GoogleTts/blob/master/src/wow.jpg)
 
+### Requirements
+
+[`jq` ](https://github.com/stedolan/jq) </br>
+[`xclip` ](https://github.com/astrand/xclip) (optional)
+
 ### How to install?
 ```
 git clone https://github.com/BelkaDev/GoogleTts.git ~/Tts && cd ~/Tts
@@ -63,10 +68,13 @@ Output format contains synonyms and examples and is made easy to parse using pip
 ### Extra
 
 * A set of patterns can be configured to ignore undesirable/irrelevant words or replace specific sequences. As all options it can be changed at the top of the file, it follows this structure </br>
-`{ "sequence" : "alternative", ...}`</br></br>
-Setting up an empty string will ignore the corresponding sequence.
+`{ "sequence" ; "alternative", ...}`</br></br>
+Setting up an empty string will ignore the corresponding sequence. (option is disabled by default.) 
 
 * Audio files can be stored in the directory of your choice.
+
+### Known issues
+Todo: feed files or web urls to the script
 
 ### Known issues
 All parameters should be interchangeable, but this can cause unexpected results if they get mixed up.</br>

@@ -1,27 +1,17 @@
 #!/bin/bash
-#!/usr/bin/env bash
 ##########################################
 # Date: 04/21/2020
-# Author: belkadev <https://github.com/belkadev/>
-# Description: google translation cli
-# Details : This is part of the tts script but it
-# can be run indepentently for textual translation.
-# I'm not encouraged to update this considering there
-# are better alternatives for translation.
+# Author: belkadev
+# Description: google translation cli tool
 # Usage: $0 [source] [target] [text]
 # Examples:
 # $0 to de "send me a dime"
 # $0 ピカチュウ
-# $0 
+# more details at https://github.com/BelkaDev/GoogleTts/
 # last command will translate current selection to your default language
-#
 # what's missing? Definitions and synonyms in source language
-# Feel free to fork / add them
 # Requires:  jq, xclip (optional)
 ##########################################
-# hl: default language
-# Returns a string in which the sequences with percent (%) signs followed by
-# two hex digits have been replaced with literal characters.
 ########Default config##########
 ##############################
 #######
@@ -75,7 +65,6 @@ translations=$(echo "$response" | jq '.[1]' | jq --argjson j "$j" '.[$j]' | jq '
 #########################
 #########################
 
-#nexamples=echo $ok | jq '.[1]' | jq '.[0]' | jq '.[]' | jq '.[0]' | jq '.[]' # single translation + synonyms
 parsed=$(echo "$translations" | sed 's/<[^>]*>//g')
 output=$(printf $translation:"\n${test:0}")
 test=$(echo $test | sed 's/"//g' | tr -s " ")
@@ -83,7 +72,6 @@ echo "	$i: ${translations:1:-1}: (${test:2:-2})"
 done
 done
 fi
-#synonym=echo $ok | jq '.[1]' | jq '.[0]' | jq '.[]' | jq '.[0]' | jq '.[loop through translations to get each of their synonyms]' 
 nexamples=$(echo "$response" | jq '.[13]' | jq '.[0]' | jq length )
 if (( $nexamples > 0 )); then
 echo ""

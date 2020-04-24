@@ -7,7 +7,7 @@
 # and it's recommended  to support the official "Google TTS" project.
 # Usage: $0 [--lang | -l <language code> ] <text>
 # Requires:  xclip (optional)
-# Todo: ignore urls and other irrelevant characters
+# Todo: feed files or web urls to the script
 ##########################################
 ########Default settings##########
 ##############################
@@ -39,7 +39,7 @@ function print_help() {
 	  echo "  Executing twice will stop the ongoing playback "
 	  echo "  Argument stack importance order: language > auto > translate"
 	  echo "  The higher will always dismiss the others. "
-	  echo "  https://github.com/BelkaDev/GoogleTts for more details."
+	  echo "  https://github.com/BelkaDev/GoogleTts for further details."
 	  echo ""
 	  echo "Options:"
 	  echo "   -l, --lang <lang>	    Specify the speech language; must be a valid Google tag
@@ -139,13 +139,13 @@ esac
 #######Process input#########
 if [[ $translate == true && $auto == false && $langflag == false ]]; then
 	[[ $verboseflag == true ]] && echo "translating text to $to"
-	data=$(gtranslate to $to "$query")
+	data=$(translate to $to "$query")
 	query=$(echo "$data" | grep -w "translation" | cut -f2 -d ":")
 	lang=$(echo "$data"  | grep -w "target_lang" | cut -f2 -d ":")
 	[[ $verboseflag == true ]] && echo "translated text: $query"
 fi
 
-if [[ $auto == true ]]; then lang="$(gtranslate "$query" | grep -w "source_lang" | cut -f2 -d ":")";if [[ $verboseflag == true ]]; then echo "Language detected: $lang";fi;fi
+if [[ $auto == true ]]; then lang="$(translate "$query" | grep -w "source_lang" | cut -f2 -d ":")";if [[ $verboseflag == true ]]; then echo "Language detected: $lang";fi;fi
 [ -z "$query" ] && query="$(echo "$(xclip -o)" |  awk '$1=$1')"
 [[ $verboseflag == true ]] && echo "reading (($query)) in $lang"
 qlen="${#query}"
