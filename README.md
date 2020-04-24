@@ -29,10 +29,10 @@ copy both scripts to your $PATH directory
 	* ` -l es "hi" ` reads input in Spanish voice
 </br>
 </br>
-<u>*Notes*</u></br>
+<u><i>Notes</i></u></br>
  All options can be specified on runtime or set up </br>
 by default in the settings, accepted values 
-are `true`, `false`</br> for boolean attributes, for language codes </br>use one of valid language tags supported by Google.</br>
+are `true` , `false` </br> for boolean attributes, for language codes </br>use one of valid language tags supported by Google.</br>
 [The complete list can be found here:](https://sites.google.com/site/opti365/translate_codes)</br></br>
 Stack order follows this order: language>auto>translate</br>
 Meaning the higher important will dismiss the others.</br>
