@@ -18,15 +18,15 @@ lang="en-us"
 auto=false
 translate=false; to=$lang
 keep=false
-##### patterns (words to ignore/replace)####
+usepatterns=false
+##### patterns (ignore/replace list) ####
 patterns='{
 "https://";"",
 "http://";"",
 "www.";"",
-"tbh";"to be honest"
+"\";"",
+"btw";"by the way",
 }'
-
-trimurls=false
 #############################
 ###############################
 function print_help() {
@@ -37,25 +37,28 @@ function print_help() {
 	  echo "  If no text is provided, current selection will be processed (requires an x env)"
 	  echo "  All default settings can be changed at the top of the script "
 	  echo "  Executing twice will stop the ongoing playback "
-	  echo "  Argument stack order: language > auto > translate"
-	  echo "  Meaning the former will always disregard the others. "
-	  echo "  https://github.com/BelkaDev/GoogleTts for further details."
+	  echo "  Argument stack importance order: language > auto > translate"
+	  echo "  The higher will always neglect the others. "
+	  echo "  https://github.com/BelkaDev/GoogleTts for more details."
 	  echo ""
 	  echo "Options:"
 	  echo "   -l, --lang <lang>	    Specify the speech language; must be a valid Google tag
 	  		    [default:$lang]"
 	  echo ""
 
-	echo "   -a, --auto 		    Auto detect and read in that language.
+	echo "   -a, --auto 		    Auto detect language and read.
 	  		    [default:$auto]" 
 	  echo ""
 
-	echo "   -t, --translate [lang]   Text is translated before being read; if no target 
+	echo "   -t, --translate [lang]   Text is translated before being read;If no target 
 			    language is given, translate to default language
-	      		    [default:{$translate,$lang}]"  
+	      		    [default:$translate,$lang]"  
 	  echo ""
 	echo "   -k, --keep   	    Store audio file in the default cache directory
 	      		    [default:$keep]"  
+	  echo ""
+	  echo "   -p, --pattern 	    Allow filters.They can be changed in the script file
+	  		    [default:$usepatterns]" 
 	  echo ""
 
 	echo "   -c, --clear-cache 	    Remove all the cached audio files and exit" 
@@ -85,7 +88,7 @@ alt="$(echo "${patterns:1:-1}" | cut -f2 -d ";")"
 IFS=',';alt=(${alt}); unset IFS;
 for (( i = 0; i < ${#words[@]} ; i++ )); do
 if [[ "$out" == *"${words[$i]:1:-1}"* ]]; then
-[[ $verboseflag == true ]] && echo "replaced ${words[$i]:1:-1} with "${alt[$i]}""> /dev/tty
+[[ $verboseflag == true ]] && echo "replaced ${words[$i]:1:-1} with ${alt[$i]}"> /dev/tty
 
 out="${out/${words[$i]:1:-1}/${alt[$i]:1:-1}}" 	
 fi
@@ -135,13 +138,13 @@ esac
 #######Process input#########
 if [[ $translate == true && $auto == false && $langflag == false ]]; then
 	[[ $verboseflag == true ]] && echo "translating text to $to"
-	data=$(GTranslate to $to "$query")
+	data=$(gtranslate to $to "$query")
 	query=$(echo "$data" | grep -w "translation" | cut -f2 -d ":")
 	lang=$(echo "$data"  | grep -w "target_lang" | cut -f2 -d ":")
 	[[ $verboseflag == true ]] && echo "translated text: $query"
 fi
 
-if [[ $auto == true ]]; then lang="$(GTranslate "$query" | grep -w "source_lang" | cut -f2 -d ":")";if [[ $verboseflag == true ]]; then echo "Language detected: $lang";fi;fi
+if [[ $auto == true ]]; then lang="$(gtranslate "$query" | grep -w "source_lang" | cut -f2 -d ":")";if [[ $verboseflag == true ]]; then echo "Language detected: $lang";fi;fi
 [ -z "$query" ] && query="$(echo "$(xclip -o)" |  awk '$1=$1')"
 [[ $verboseflag == true ]] && echo "reading (($query)) in $lang"
 qlen="${#query}"
@@ -171,11 +174,10 @@ else paragraphs[0]="$query"; fi
 #fi#############################
 #######Get the response############
 for p in "${paragraphs[@]}"; do
-[[ trimurls == false ]] ||  p=$(replace "$p")
+[[ $usepatterns == true ]] ||  p=$(replace "$p")
 encoded=$(urlencode "$p")
 filename=$(echo $lang$encoded | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]' )
 if ! [ -f "$cachedir/$filename.ogg" ]; then
-#$(curl -sA "Firefox" https://translate.google.com/translate_tts\?ie\=UTF-8\&q\=%22$urlq%22\&tl\="$lang"\&client\=tw-ob -o $cachedir/$filename.ogg)
 $(curl -sA "Firefox" "https://translate.google.com/translate_tts?ie=UTF-8&q=%22${encoded}%22&tl="$lang"&client=tw-ob" -o $cachedir/$filename.ogg)
 fi
 ################################
