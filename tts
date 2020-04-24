@@ -19,7 +19,7 @@ auto=false
 translate=false; to=$lang
 keep=false
 usepatterns=false
-##### patterns (ignore/replace list) ####
+##### patterns (ignore/replace words) ####
 patterns='{
 "https://";"",
 "http://";"",
@@ -38,7 +38,7 @@ function print_help() {
 	  echo "  All default settings can be changed at the top of the script "
 	  echo "  Executing twice will stop the ongoing playback "
 	  echo "  Argument stack importance order: language > auto > translate"
-	  echo "  The higher will always neglect the others. "
+	  echo "  The higher will always dismiss the others. "
 	  echo "  https://github.com/BelkaDev/GoogleTts for more details."
 	  echo ""
 	  echo "Options:"
@@ -72,13 +72,12 @@ urlencode() {
     for (( i = 0; i < length; i++ )); do
         local c="${1:i:1}"
         case $c in
-            [a-zA-Z0-9.~_-]) printf "$c" ;;
-            *) printf '%%%02X' "'$c" ;;
+             [#\[\]\ ]) printf '%%%02X' "'$c" ;;
+            *) printf "$c" ;;
         esac
     done
     LC_COLLATE=$old_lc_collate
 }
-#ignore some irrelevant characters like urls 
 
 replace() {
 out="$1"
@@ -88,7 +87,7 @@ alt="$(echo "${patterns:1:-1}" | cut -f2 -d ";")"
 IFS=',';alt=(${alt}); unset IFS;
 for (( i = 0; i < ${#words[@]} ; i++ )); do
 if [[ "$out" == *"${words[$i]:1:-1}"* ]]; then
-[[ $verboseflag == true ]] && echo "replaced ${words[$i]:1:-1} with ${alt[$i]}"> /dev/tty
+[[ $verboseflag == true ]] && echo "replaced ${words[$i]:1:-1} with "${alt[$i]}""> /dev/tty
 
 out="${out/${words[$i]:1:-1}/${alt[$i]:1:-1}}" 	
 fi
@@ -96,7 +95,7 @@ done
 echo $out
 }
 #######Send kill signal#########
-###Small workaround to kill te mediaplayer when the script is running 
+###Small workaround to kill the mediaplayer when the script is running 
 pid=$(pgrep -f ${mediaplayer} | grep -v $$)
 pscript=$(pgrep -f ${BASH_SOURCE[0]} | grep -v $$)
 if (( ${#pid} > 0 )) && (( ${#pscript} > 0 )); then
@@ -115,6 +114,7 @@ while [ "$#" -gt 0 ]; do
     -h|--help) print_help && exit 0;;
     -c|--clear-cache)  read -p "removing all files in $cachedir, confirm? [Y/n] " yn;;
    -v|--verbose) verboseflag=true;;
+    -p|--pattern) usepatterns=true;;
     -*) echo "unknown option: $1
 $(basename $0) --help for more details." >&2; exit 1;;
     *)  query=$(echo "${1}");;
@@ -131,6 +131,7 @@ case "$query" in
     esac
     exit 0;;
    -v|--verbose) verboseflag=true;;
+    -p|--pattern) usepatterns=true;;
     -*) echo "unknown option: $1
 $(basename $0) --help for more details." >&2; exit 1;;
 esac
@@ -174,7 +175,7 @@ else paragraphs[0]="$query"; fi
 #fi#############################
 #######Get the response############
 for p in "${paragraphs[@]}"; do
-[[ $usepatterns == true ]] ||  p=$(replace "$p")
+[[ $usepatterns == true ]] &&  p=$(replace "$p")
 encoded=$(urlencode "$p")
 filename=$(echo $lang$encoded | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]' )
 if ! [ -f "$cachedir/$filename.ogg" ]; then

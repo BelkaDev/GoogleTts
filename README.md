@@ -33,7 +33,8 @@ copy both scripts to your $PATH directory
  All options can be specified on runtime or set up </br>
 by default in the settings, accepted values 
 are `true` , `false` </br> for boolean attributes, for language codes </br>use one of valid language tags supported by Google.</br>
-[The complete list can be found here:](https://sites.google.com/site/opti365/translate_codes)</br></br>
+
+[The complete list can be found here](https://sites.google.com/site/opti365/translate_codes)</br></br>
 Stack order follows this order: language>auto>translate</br>
 Meaning the higher important will dismiss the others.</br>
 `-l en -t こにちわ` will not perform translation.</br>
@@ -43,7 +44,7 @@ is processed, this requires an X environement. </br>
 When run on terminal, double quotes must wrap the input.</br></br>
 
 **Translation**</br>
-*the translation script can be used independently, but not the other way around*</br>*most basic syntax is as follows:* </br>
+*the translation script can be used independently, but not the other way around*</br>*most broad syntax is as follows:* </br>
 `translate [from <source> to <target> <text>]` </br>
 Every parameter can be ommited, in that case automatic values </br>
 are considered. examples:</br>
@@ -65,4 +66,4 @@ Output format contains synonyms and examples and is made easy to parse using pip
 `{ "sequence" : "alternative", ...}`</br></br>
 Setting up an empty string will ignore the corresponding sequence.
 
-* Audio files can be stored to a local directory.
+* Audio files can be stored in the directory of your choice.
