@@ -67,3 +67,8 @@ Output format contains synonyms and examples and is made easy to parse using pip
 Setting up an empty string will ignore the corresponding sequence.
 
 * Audio files can be stored in the directory of your choice.
+
+### Known issues
+All parameters should be interchangeable, but this can cause unexpected results if they get mixed up.</br>
+Encoding erros: some characters may cause the script to fail.
+
