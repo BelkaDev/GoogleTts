@@ -1,13 +1,27 @@
 #!/bin/bash
+#!/usr/bin/env bash
 ##########################################
 # Date: 04/21/2020
-# Author: belkadev
-# Description: google translation cli tool
+# Author: belkadev <https://github.com/belkadev/>
+# Description: google translation cli
+# Details : This is part of the tts script but it
+# can be run indepentently for textual translation.
+# I'm not encouraged to update this considering there
+# are better alternatives for translation.
 # Usage: $0 [source] [target] [text]
-# more details at https://github.com/BelkaDev/GoogleTts/
+# Examples:
+# $0 to de "send me a dime"
+# $0 ピカチュウ
+# $0 
+# last command will translate current selection to your default language
+#
 # what's missing? Definitions and synonyms in source language
+# Feel free to fork / add them
 # Requires:  jq, xclip (optional)
 ##########################################
+# hl: default language
+# Returns a string in which the sequences with percent (%) signs followed by
+# two hex digits have been replaced with literal characters.
 ########Default config##########
 ##############################
 #######
@@ -15,11 +29,7 @@ source_language="auto"
 target_language="en-us"
 ##############################
 ################################
-urlencode() {
-trim=$(echo "$1" | tr -s " " | tr -d '011\012\015' )
-res="${trim// /"%20"}"
-echo $res
-}
+
 while [ "$#" -gt 1 ]; do
   case "$1" in
     from) source_language="$2";shift;;
@@ -33,30 +43,16 @@ query="$1"
 else
 query="$(echo "$(xclip -o)")"
 fi
-encoded=$(urlencode "$query")
-response=$(curl --data-urlencode "q=$encoded" -sA "ff" https://translate.google.com/translate_a/single\?client\=webapp\&sl\=$source_language\&tl\=$target_language\&hl\=$target_language\&dt\=at\&dt\=bd\&dt\=ex\&dt\=ld\&dt\=md\&dt\=qca\&dt\=rw\&dt\=rm\&dt\=sos\&dt\=ss\&dt\=t\&dt\=gt\&source\=bh\&ssel\=0\&tsel\=0\&xid\=1791807%2C45625687%22C45626150\&kc\=1\&tk)
-
-
-length=$(echo "$response" | jq '.[0]' | jq length)
-if (( length > 2 )); then
-for (( i = 0; i < $length; i++ )); do
-add=$(echo $response | jq '.[0]' | jq --argjson i "$i" '.[$i]' | jq '.[0]' | awk  '{gsub("\\\\n","\n")};1')
-translation=$(echo $translation ${add:1:-1})
-done
-else 
-translation=$(echo "$response" | jq '.[0]' | jq '.[0]' |  jq '.[0]')
-fi
-# update this
-#
-
+echo ""
+echo "PRIMARY:"
+echo "--------"
+response=$(curl --data-urlencode "q=$query" -sA "ff" https://translate.google.com/translate_a/single\?client\=webapp\&sl\=$source_language\&tl\=$target_language\&hl\=$target_language\&dt\=at\&dt\=bd\&dt\=ex\&dt\=ld\&dt\=md\&dt\=qca\&dt\=rw\&dt\=rm\&dt\=sos\&dt\=ss\&dt\=t\&dt\=gt\&source\=bh\&ssel\=0\&tsel\=0\&xid\=1791807%2C45625687%22C45626150\&kc\=1\&tk)
+translation=$(echo "$response" | jq -c '.[0]' | jq -c '.[0]' | jq -c '.[0]')
 lang=$(echo "$response"  | jq -c '.[2]' )
 echo "source_lang:${lang:1:-1}"
-echo ""
 echo "target_lang:${target_language}"
-echo ""
 echo "source_text:${query}"
-echo ""
-echo "translation:$translation"
+echo "translation:${translation:1:-1}"
 echo ""
 
 
@@ -79,6 +75,7 @@ translations=$(echo "$response" | jq '.[1]' | jq --argjson j "$j" '.[$j]' | jq '
 #########################
 #########################
 
+#nexamples=echo $ok | jq '.[1]' | jq '.[0]' | jq '.[]' | jq '.[0]' | jq '.[]' # single translation + synonyms
 parsed=$(echo "$translations" | sed 's/<[^>]*>//g')
 output=$(printf $translation:"\n${test:0}")
 test=$(echo $test | sed 's/"//g' | tr -s " ")
@@ -86,6 +83,7 @@ echo "	$i: ${translations:1:-1}: (${test:2:-2})"
 done
 done
 fi
+#synonym=echo $ok | jq '.[1]' | jq '.[0]' | jq '.[]' | jq '.[0]' | jq '.[loop through translations to get each of their synonyms]' 
 nexamples=$(echo "$response" | jq '.[13]' | jq '.[0]' | jq length )
 if (( $nexamples > 0 )); then
 echo ""
