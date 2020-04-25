@@ -154,7 +154,6 @@ index=0
 pointer=0
 while [[ $length -gt 0 ]]; do
 paragraphs[$index]=${query:$pointer:$maxlen}
-echo "paragraphs[$index] : ${paragraphs[$index]}"
 (( pointer+=$maxlen ))
 (( length-= $maxlen ))
 (( index++ ))
