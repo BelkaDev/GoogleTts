@@ -40,7 +40,7 @@ are `true` , `false` </br> for boolean attributes, for language codes </br>use o
 
 [The complete list can be found here](https://sites.google.com/site/opti365/translate_codes)</br></br>
 Stack order follows this order: language>auto>translate</br>
-Meaning the highest will always dismiss the others.</br>
+Meaning the highest will always neglect the others.</br>
 `-l en -t こにちわ` will not perform translation.</br>
 </br>
 If no text input is given, current selection (highlighted text),</br>
