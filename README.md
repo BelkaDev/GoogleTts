@@ -28,7 +28,7 @@ copy both scripts to your $PATH directory
 	* `-a "こにちわ"` will read in Japanese</br>
 	* `-a "hola"` will read in Spanish
 * `-t, --translate <lang>` to translate and read </br>
-	* `-t "こにちわ"` will translate to default language and read.
+	* `-t "こにちわ"` will translate to preferred language and read.
 	* `-t de "こにちわ"` will translate to German and read.
 * `-l, --language <lang>` to change the language </br>
 	* ` -l es "hi" ` reads input in Spanish voice
@@ -52,8 +52,8 @@ When run on terminal, double quotes must wrap the input.</br></br>
 `translate [from <source> to <target> <text>]` </br>
 Each parameter can be ommited, in that case automatic values are considered.</br> examples:</br>
 `translate to ko "hello"`: detects language and translates to Korean</br>
-`translate from fr "bonjour"`: translates from French to default language</br>
-`translate`: translate selection from detected language to default language
+`translate from fr "bonjour"`: translates from French to preferred language</br>
+`translate`: translate selection from detected language to preferred language
 
 Output format contains synonyms and examples and is made easy to parse using pipes. </br> </br>
 ![output](https://github.com/BelkaDev/GoogleTts/blob/master/src/output.jpg)
